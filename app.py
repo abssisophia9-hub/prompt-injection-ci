@@ -29,6 +29,7 @@ def summarize(document: str) -> str:
         },
         timeout=60,
     )
-    if r.status_code != 200:
-        raise RuntimeError(f"GitHub Models returned {r.status_code}: {r.text[:300]}")
-    return r.json()["choices"][0]["message"]["content"]
+    try:
+        return r.json()["choices"][0]["message"]["content"]
+    except Exception:
+        raise RuntimeError(f"HTTP {r.status_code} from GitHub Models. Body: {r.text[:400]!r}")
